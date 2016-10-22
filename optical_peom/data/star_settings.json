@@ -1,0 +1,15 @@
+{
+	"settings" : 
+	{
+		"0" : 
+		{
+			"pos_x" : 0.0,
+			"pos_y" : 0.0,
+			"col_r" : 1.0,
+			"col_g" : 0.0,
+			"col_b" : 0.0,
+			"radius" : 0.05,
+			"type" : "circle"
+		}
+	}
+}

@@ -1,0 +1,80 @@
+include("jsVectors.js");
+
+var Util = ( function() {
+	var instance;
+
+	function init() {
+		// Private methods and variables
+		return {
+			// Public methods and variables
+
+			//Imports a json file to a dictionary
+			importJson : function( dDict, sName ) {
+				dDict.import_json( sName + ".json" );
+			},
+
+			getTime : function() {
+				var d = new Date();
+				return "[ " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ":" + d.getMilliseconds() + " ] ";
+			},
+
+			getRandom : function( range, offset ) {
+				return ( Math.random() * range ) + offset;
+			},
+
+			getQuadrant : function( x, y ) {
+				if ( x > 0 && y >= 0) {
+					return 0;
+				} else if ( x <= 0 && y > 0) {
+					return 1;
+				} else if ( x < 0 && y <= 0 ) {
+					return 2;
+				} else {
+					return 3;
+				}
+			},
+
+			getTheta : function( origin, point ) {
+				var hypo = Vector.sub( point, origin ).mag();
+				//post(hypo.toString() );
+				var opp = Vector.sub(point, new Vector( point.x, origin.y) ).mag();
+				var theta = Math.asin(opp / hypo);
+				var quad = Util.getInstance().getQuadrant( point.x, point.y );
+				/*post("Hypot: " + hypo.toString() + " Oppo: " + opp.toString() + " Theta: " + theta.toString()
+					+ " Quad: " + quad + "\n");*/
+				if ( quad == 1 ) {
+					theta = Math.PI - theta;
+				} else if ( quad == 2 ) {
+					theta = Math.PI + theta;
+				} else if ( quad == 3 ) {
+					theta = 2 * Math.PI - theta;
+				}
+				//post("Inner:" + theta+"\n");
+				return theta;
+								
+			},
+
+			toDegrees : function ( theta ) {
+				//post("Theta: " + theta + " Poop: " + theta * 180.0 + "\n"  );
+				return (theta * 180.0 / Math.PI);
+
+			}
+
+		};
+	};
+
+	return {
+	 	// Get the Singleton instance if one exists or create one if it doesn't
+	    getInstance: function () {
+
+	      if ( !instance ) {
+	        instance = init();
+	      }
+
+	      return instance;
+	    }
+		
+	};
+
+} )();
+
