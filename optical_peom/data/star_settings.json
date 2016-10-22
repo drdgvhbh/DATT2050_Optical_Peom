@@ -3,13 +3,30 @@
 	{
 		"0" : 
 		{
-			"pos_x" : 0.0,
-			"pos_y" : 0.0,
-			"col_r" : 1.0,
-			"col_g" : 0.0,
-			"col_b" : 0.0,
-			"radius" : 0.05,
-			"type" : "circle"
+			"max_pos_x" : 0.8,
+			"min_pos_x" : 0.1,
+			"max_pos_y" : 1.0,
+			"min_pos_y" : -1.0,
+			"col_r" : 0.85098,
+			"col_g" : 0.78824,
+			"col_b" : 0.10980,
+			"radius" : 0.02,
+			"type" : "circle",
+			"speed" : "8.0"
+		}
+,
+		"1" : 
+		{
+			"max_pos_x" : -0.85,
+			"min_pos_x" : -0.15,
+			"max_pos_y" : 1.0,
+			"min_pos_y" : -1.0,
+			"col_r" : 0.94117,
+			"col_g" : 0.78039,
+			"col_b" : 0.07451,
+			"radius" : 0.025,
+			"type" : "circle",
+			"speed" : "4.0"
 		}
 	}
 }

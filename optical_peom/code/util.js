@@ -34,7 +34,7 @@ var Util = ( function() {
 				}
 			},
 
-			getTheta : function( origin, point ) {
+			getTheta : function( point, origin ) {
 				var hypo = Vector.sub( point, origin ).mag();
 				//post(hypo.toString() );
 				var opp = Vector.sub(point, new Vector( point.x, origin.y) ).mag();
@@ -58,8 +58,21 @@ var Util = ( function() {
 				//post("Theta: " + theta + " Poop: " + theta * 180.0 + "\n"  );
 				return (theta * 180.0 / Math.PI);
 
-			}
+			},
 
+			toRadians : function ( degrees ) {
+				return degrees * Math.PI / 180;
+			},
+
+			getDistance : function( p1, p2 ) {
+			 	return Vector.sub(p1,p2).mag();
+			},
+
+			normalize : function ( value, min, max ) {
+				var range = max - min;
+				return value / range;
+			}
+ 
 		};
 	};
 
