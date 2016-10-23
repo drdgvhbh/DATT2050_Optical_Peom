@@ -5,10 +5,12 @@ include("timers.js");
 
 autowatch = 1;
 
+var paused = false; // Is it paused?
+
 var RGB_MAX = 255;
 var RGB_MIN = 0;
 var FPS = 60;
-var radiusToSpeedRatio = 0.5;
+
 
 var sketch; //Global jit.gl.sketch object
 
@@ -38,6 +40,9 @@ var timers = {
 var util = Util.getInstance(); //Utility class
 
 setup();
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var radiusToSpeedRatio = 0.5;
 
 function setup() {
 	initSettings();
@@ -77,9 +82,10 @@ function setup() {
 
 	post( util.getTime() + "Setup complete.\n" );
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function update() {
-	post(timers["global"].elapsedSeconds()+"\n");
+	outlet( 0, timers["global"].elapsedSeconds() );
+	//post(timers["global"].elapsedSeconds()+"\n");
 	for ( i = 0; i < instances["stars"].length; i++ ) {
 		var star = instances.stars[i];
 		star.theta = star.theta + util.toRadians( 360 / ( FPS * star.speed ) );
@@ -87,7 +93,7 @@ function update() {
 		star.position.y = star.oRadiusY * Math.sin(star.theta);
 	}
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function draw() {
 	for ( var k in instances ) {
 		if ( instances.hasOwnProperty(k) ) {
@@ -101,17 +107,52 @@ function draw() {
 		}
 	}
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var ambientExp = 500.0;
+var aExpThreshold = 150.0;
+var ambientRatio = 1.0;
+var aRatioThreshold = 20.0;
 
+function ambient( sig ) {
+	if ( timers["global"].elapsedSeconds() > 0 ) {
+		for ( var k in instances ) {
+			if ( instances.hasOwnProperty(k) ) {
+				for ( j = 0; j < instances[k].length; j++ ) {
+					var inst = instances[k][j];					
+					var ratio = sig * Math.pow(1.1, sig * ambientExp ) / ambientRatio;
+					//post(ratio+"\n");
+					for ( c = 0; c < inst.color.length; c++ ) {
+							inst.color[c] = inst.getBaseColor()[c] * ratio;						
+					}
+					if ( inst.color[0] > 1.0 || inst.color[1] > 1.0 || inst.color[2] > 1.0 )
+						inst.color = inst.getBaseColor();
+					if ( ambientRatio < aRatioThreshold  )
+						ambientRatio = ambientRatio + 0.01;
+					if ( ambientExp > aExpThreshold )
+						ambientExp = ambientExp - 0.21;
+					post(ratio+"\n")
+					post("Ambient Ratio: " + ambientRatio + " AmbientExp: " + ambientExp+"\n");
+					//post(inst.getBaseColor()[0]);
+					//post(inst.color+"\n");
+				}
+			}
+		}	
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function reset() {
 	sketch.reset();
 	this.box.compile();
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function bang() {
-	update();
+	if (!paused) {
+		update();
+	}
 	draw();
+	
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function initSettings() {
 	for ( var k in dicts ) {
 		if ( dicts.hasOwnProperty(k) ) {
@@ -119,3 +160,27 @@ function initSettings() {
 		}
 	}
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function pause() {
+	if (paused == true) 
+		return;
+	paused = true;
+	for ( var k in timers ) {
+		if ( timers.hasOwnProperty(k) ) {
+			timers[k].pause();
+		}
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function resume() {
+	if (paused == false) 
+		return;
+	paused = false;
+	for ( var k in timers ) {
+		if ( timers.hasOwnProperty(k) ) {
+			timers[k].resume();
+		}
+	}
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+

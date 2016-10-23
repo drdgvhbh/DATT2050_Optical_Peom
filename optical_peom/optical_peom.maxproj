@@ -2,8 +2,8 @@
 	"name" : "optical_peom",
 	"version" : 1,
 	"creationdate" : 3559918250,
-	"modificationdate" : 3559923509,
-	"viewrect" : [ 761.0, 170.0, 300.0, 544.0 ],
+	"modificationdate" : 3560015638,
+	"viewrect" : [ 762.0, 170.0, 299.0, 541.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
 	"showdependencies" : 1,
@@ -14,6 +14,11 @@
 				"kind" : "patcher",
 				"local" : 1,
 				"toplevel" : 1
+			}
+,
+			"filter.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
 			}
 
 		}
@@ -44,6 +49,19 @@
 ,
 			"util.js" : 			{
 				"kind" : "javascript",
+				"local" : 1
+			}
+,
+			"timers.js" : 			{
+				"kind" : "javascript",
+				"local" : 1
+			}
+
+		}
+,
+		"data" : 		{
+			"star_settings.json" : 			{
+				"kind" : "json",
 				"local" : 1
 			}
 

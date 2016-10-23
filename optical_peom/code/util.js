@@ -71,6 +71,14 @@ var Util = ( function() {
 			normalize : function ( value, min, max ) {
 				var range = max - min;
 				return value / range;
+			},
+
+			mutliplyArray : function( multiplier, array ) {
+				var a = new Array();
+				for ( i = 0; i < array.length; i++ ) {
+					a.push( array[i] * multiplier );
+				}
+				return a;
 			}
  
 		};

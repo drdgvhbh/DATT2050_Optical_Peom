@@ -4,6 +4,7 @@ var AbsSketchInst = (function() {
 	function AbsSketchInst( pos, col, radius, type, theta, oRadX, oRadY, speed ) {
 		this.position = pos || new Vector();
 		this.color = col || new Array( 0., 0., 0. );
+		this.baseColor = new Array( col[0], col[1], col[2] );
 		this.radius = radius || 0.;
 		this.type = type || "circle";
 		this.theta = theta || 0.;
@@ -30,7 +31,18 @@ var AbsSketchInst = (function() {
 					sketchObj.framecircle( radius );
 				}
 			}
+		},
+
+		getBaseColor : function() {
+			var a = new Array();
+
+			for ( i = 0; i < this.baseColor.length; i++ ) {
+				a.push( this.baseColor[i] );
+			}
+			return a;
 		}
+
+
 	};
 	return AbsSketchInst;
 })(); 
