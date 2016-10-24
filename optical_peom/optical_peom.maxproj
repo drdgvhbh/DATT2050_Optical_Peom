@@ -2,7 +2,7 @@
 	"name" : "optical_peom",
 	"version" : 1,
 	"creationdate" : 3559918250,
-	"modificationdate" : 3560015638,
+	"modificationdate" : 3560163385,
 	"viewrect" : [ 762.0, 170.0, 299.0, 541.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
@@ -56,11 +56,26 @@
 				"kind" : "javascript",
 				"local" : 1
 			}
+,
+			"SketchInst.js" : 			{
+				"kind" : "javascript",
+				"local" : 1
+			}
+,
+			"velSketchInst.js" : 			{
+				"kind" : "javascript",
+				"local" : 1
+			}
 
 		}
 ,
 		"data" : 		{
 			"star_settings.json" : 			{
+				"kind" : "json",
+				"local" : 1
+			}
+,
+			"blue_warriors_settings.json" : 			{
 				"kind" : "json",
 				"local" : 1
 			}

@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 34.0, 76.0, 1324.0, 930.0 ],
+		"rect" : [ 42.0, 84.0, 1318.0, 930.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,6 +38,19 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-12",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 318.166626, 250.0, 100.0, 22.0 ],
+					"style" : "",
+					"text" : "loadmess 0"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-16",
 					"logamp" : 0,
 					"logfreq" : 1,
@@ -46,7 +59,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 413.166626, 549.5, 300.0, 100.0 ],
-					"presentation_rect" : [ 920.0, 580.0, 0.0, 0.0 ],
 					"style" : ""
 				}
 
@@ -176,7 +188,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 217.166687, 810.333313, 144.0, 22.0 ],
 					"style" : "",
-					"text" : "ambient 0.232573"
+					"text" : "ambient 0.201671"
 				}
 
 			}
@@ -255,7 +267,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 434.0, 250.0, 84.0, 22.0 ],
 					"style" : "",
-					"text" : "44.785"
+					"text" : "77.236"
 				}
 
 			}
@@ -505,24 +517,24 @@
 						"clips" : [ 							{
 								"filename" : "Ezietto - Stars and Warriors [Trancer].wav",
 								"filekind" : "audiofile",
-								"selection" : [ 0.133858, 1.0 ],
+								"selection" : [ 0.0, 1.0 ],
 								"loop" : 0,
 								"content_state" : 								{
-									"speed" : [ 1.0 ],
 									"originallengthms" : [ 0.0 ],
-									"pitchcorrection" : [ 0 ],
-									"play" : [ 0 ],
-									"formant" : [ 1.0 ],
-									"timestretch" : [ 0 ],
-									"quality" : [ "basic" ],
 									"formantcorrection" : [ 0 ],
-									"originallength" : [ 0.0, "ticks" ],
-									"pitchshift" : [ 1.0 ],
-									"basictuning" : [ 440 ],
-									"originaltempo" : [ 120.0 ],
-									"mode" : [ "basic" ],
 									"slurtime" : [ 0.0 ],
-									"followglobaltempo" : [ 0 ]
+									"quality" : [ "basic" ],
+									"formant" : [ 1.0 ],
+									"basictuning" : [ 440 ],
+									"pitchcorrection" : [ 0 ],
+									"originallength" : [ 0.0, "ticks" ],
+									"followglobaltempo" : [ 0 ],
+									"timestretch" : [ 0 ],
+									"originaltempo" : [ 120.0 ],
+									"play" : [ 0 ],
+									"speed" : [ 1.0 ],
+									"pitchshift" : [ 1.0 ],
+									"mode" : [ "basic" ]
 								}
 
 							}
@@ -616,9 +628,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "bang", "" ],
-					"patching_rect" : [ 182.0, 141.0, 573.0, 22.0 ],
+					"patching_rect" : [ 182.0, 141.0, 680.0, 22.0 ],
 					"style" : "",
-					"text" : "jit.world @name Stars_And_Warriors @fsmenubar 1 @floating 1 @size 848 480 @ortho 2 @fps 60"
+					"text" : "jit.world @name Stars_And_Warriors @fsmenubar 1 @floating 1 @size 848 480 @ortho 2 @fps 60 @erase_color 0. 0. 0. 1."
 				}
 
 			}
@@ -628,7 +640,7 @@
 					"destination" : [ "obj-4", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"midpoints" : [ 468.5, 166.0, 468.5, 166.0 ],
+					"midpoints" : [ 522.0, 166.0, 468.5, 166.0 ],
 					"source" : [ "obj-1", 1 ]
 				}
 
@@ -708,6 +720,15 @@
 					"hidden" : 0,
 					"midpoints" : [ 551.5, 208.0, 470.0, 208.0, 470.0, 214.0, 468.5, 214.0 ],
 					"source" : [ "obj-11", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-12", 0 ]
 				}
 
 			}

@@ -75,10 +75,16 @@ var Util = ( function() {
 
 			mutliplyArray : function( multiplier, array ) {
 				var a = new Array();
-				for ( i = 0; i < array.length; i++ ) {
+				for ( var i = 0; i < array.length; i++ ) {
 					a.push( array[i] * multiplier );
 				}
 				return a;
+			},
+
+			getRandomDictionaryPoint : function( dict, max, min, multiplier ) {
+				return instance.getRandom ( parseFloat( dict.get( max ) ) * multiplier - parseFloat( dict.get( min ) * multiplier ), 
+								 			parseFloat( dict.get( min ) ) 
+											);
 			}
  
 		};

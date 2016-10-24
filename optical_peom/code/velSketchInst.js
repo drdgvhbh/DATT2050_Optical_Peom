@@ -1,9 +1,9 @@
 include("jsVectors.js");
 include("SketchInst.js");
 
-//Controlled by adjusting the position
-var AbsSketchInst = (function() {
-	function AbsSketchInst( pos, col, radius, type, theta, oRadX, oRadY, speed ) {
+//Controlled by adjusting the velocity and acceleration
+var VelSketchInst = (function() {
+	function VelSketchInst( pos, col, radius, type, theta, oRadX, oRadY, speed ) {
 		this.position = pos || new Vector();
 		this.color = col || new Array( 0., 0., 0. );
 		this.baseColor = new Array( col[0], col[1], col[2] );
@@ -16,7 +16,7 @@ var AbsSketchInst = (function() {
 		this.sketchInst = SketchInst.getInstance();
 	}
 
-	AbsSketchInst.prototype = {
+	VelSketchInst.prototype = {
 		draw : function( sketchObj, radius ) {
 			if (typeof radius === "undefined" ) {
 				this.sketchInst.draw( sketchObj, this.radius, this.type );
