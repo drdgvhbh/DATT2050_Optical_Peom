@@ -83,7 +83,7 @@ var Util = ( function() {
 
 			getRandomDictionaryPoint : function( dict, max, min, multiplier ) {
 				return instance.getRandom ( parseFloat( dict.get( max ) ) * multiplier - parseFloat( dict.get( min ) * multiplier ), 
-								 			parseFloat( dict.get( min ) ) 
+								 			parseFloat( dict.get( min ) ) * multiplier
 											);
 			}
  

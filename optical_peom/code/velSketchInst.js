@@ -3,16 +3,18 @@ include("SketchInst.js");
 
 //Controlled by adjusting the velocity and acceleration
 var VelSketchInst = (function() {
-	function VelSketchInst( pos, col, radius, type, theta, oRadX, oRadY, speed ) {
+	/*theta, oRadX, oRadY, speed*/
+	function VelSketchInst( pos, col, radius, type, vel ) {
 		this.position = pos || new Vector();
 		this.color = col || new Array( 0., 0., 0. );
 		this.baseColor = new Array( col[0], col[1], col[2] );
 		this.radius = radius || 0.;
 		this.type = type || "circle";
-		this.theta = theta || 0.;
-		this.oRadiusX = oRadX;
-		this.oRadiusY = oRadY;
-		this.speed = speed || 1; //Time it takes in seconds to complete one full revolution.
+		this.velocity = vel || new Vector();
+		//this.theta = theta || 0.;
+		//this.oRadiusX = oRadX;
+		//this.oRadiusY = oRadY;
+		//this.speed = speed || 1; //Time it takes in seconds to complete one full revolution.
 		this.sketchInst = SketchInst.getInstance();
 	}
 
@@ -29,7 +31,6 @@ var VelSketchInst = (function() {
 			return this.sketchInst.getBaseColor( this.baseColor );
 		}
 
-
 	};
-	return AbsSketchInst;
+	return VelSketchInst;
 })(); 

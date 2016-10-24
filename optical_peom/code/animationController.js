@@ -1,6 +1,7 @@
 include("jsVectors.js");
 include("util.js");
 include("absSketchInst.js");
+include("velSketchInst.js");
 include("timers.js");
 
 autowatch = 1;
@@ -19,7 +20,7 @@ var centerOfMass = new Vector( 0., 0. );
 
 var quantity = {
 	"stars" : 2,
-	"blue_warriors" : 5
+	"blue_warriors" : 10
 }
 
 //Container for Instances
@@ -72,6 +73,8 @@ function setup() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function update() {
 	outlet( 0, timers["global"].elapsedSeconds() );
+	//Create objects at a timepoint
+	initObjects();
 	//Update Stars
 	for ( var i = 0; i < instances["stars"].length; i++ ) {
 		var star = instances.stars[i];
@@ -140,6 +143,8 @@ function initObjects() {
 					for ( var i = 0; i < quantity["blue_warriors"]; i++ ) {
 						var prefix = "settings::" + i + "::";
 						var data = getInstSettings( dicts["blue_warriors_settings"], i );
+						//post(data[0]+"\n");
+						instances["blue_warriors"].push( new VelSketchInst( data[0], data[1], data[2], data[3] ) );
 						/*
 						var theta = util.getTheta( data[0], centerOfMass );
 						var oRadiusX =  util.getDistance(data[0], centerOfMass);
