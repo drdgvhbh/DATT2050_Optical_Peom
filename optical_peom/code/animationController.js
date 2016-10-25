@@ -19,8 +19,8 @@ var screenPixelSize = { x : 1920, y : 1080 };
 var centerOfMass = new Vector( 0., 0. );
 
 var quantity = {
-	"stars" : 2,
-	"blue_warriors" : 10
+	"stars" : 3,
+	"blue_warriors" : 20
 }
 
 //Container for Instances
@@ -77,10 +77,38 @@ function update() {
 	initObjects();
 	//Update Stars
 	for ( var i = 0; i < instances["stars"].length; i++ ) {
-		var star = instances.stars[i];
+		var star = instances["stars"][i];
 		star.theta = star.theta + util.toRadians( 360 / ( FPS * star.speed ) );
+		//post("A: "+star.speed+"\n");
 		star.position.x = star.oRadiusX * Math.cos(star.theta);
 		star.position.y = star.oRadiusY * Math.sin(star.theta);
+
+	}
+	//Update Blue Warriors
+	for ( var i = 0; i < instances["blue_warriors"].length; i++ ) {
+		var war  = instances["blue_warriors"][i];
+		//Curent Projected Position
+		var cPP = new Vector();
+		cPP.x = war.oRadiusX * Math.cos(war.theta) + war.center.x;
+		cPP.y = war.oRadiusY * Math.sin(war.theta) + war.center.y;
+		var prefix = "settings::" + i + "::";
+		war.speed = dicts["blue_warriors_settings"].get( prefix + "speed") * ( util.getDistance( cPP, war.center) / radiusToSpeedRatio );
+		war.theta = war.theta + util.toRadians( 360 / ( FPS * war.speed ) );
+		//Projected Position
+		var pP = new Vector();
+		pP.x = war.oRadiusX * Math.cos(war.theta) + war.center.x;
+		pP.y = war.oRadiusY * Math.sin(war.theta) + war.center.y;
+		//Get Direction 
+		var mag = war.acceleration.mag() + 0.0001;
+		var dir = Vector.sub(pP, war.position );
+		dir.normalize();
+		dir.mult(mag);
+		//dir.limit(0.001);
+		war.acceleration = dir;
+		war.velocity.add(war.acceleration);
+		war.velocity.limit(0.01);
+		war.position.add(war.velocity);
+		//war.position = pP;		
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,11 +126,9 @@ function draw() {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var ambientExp = 500.0;
+var ambientExp = 105.0;
 var aExpThreshold = 150.0;
-var ambientRatio = 1.0;
-var aRatioThreshold = 20.0;
-
+var a2ExpThreshold = 105.0;
 function ambient( sig ) {
 	if ( timers["global"].elapsedSeconds() > 0 ) {
 		for ( var k in instances ) {
@@ -110,16 +136,25 @@ function ambient( sig ) {
 				for ( var j = 0; j < instances[k].length; j++ ) {
 					var inst = instances[k][j];					
 					//Color Control
-					var ratio = sig * Math.pow(1.1, sig * ambientExp ) / ambientRatio;
+					var ratio = sig * Math.pow(1 + sig, ambientExp );
 					for ( c = 0; c < inst.color.length; c++ ) {
-							inst.color[c] = inst.getBaseColor()[c] * ratio;						
+						inst.color[c] = inst.getBaseColor()[c] * ratio;					
 					}
 					if ( inst.color[0] > 1.0 || inst.color[1] > 1.0 || inst.color[2] > 1.0 )
 						inst.color = inst.getBaseColor();
-					if ( ambientRatio < aRatioThreshold  )
-						ambientRatio = ambientRatio + 0.01;
-					if ( ambientExp > aExpThreshold )
-						ambientExp = ambientExp - 0.21;
+					if ( ambientExp < aExpThreshold && timers["global"].elapsedSeconds() < 17.5 ) {
+						ambientExp = ambientExp + 0.0128;
+					} else if ( ambientExp > a2ExpThreshold && timers["global"].elapsedSeconds() > 17.5 && timers["global"].elapsedSeconds() < 25. ) {
+						ambientExp = ambientExp - 0.1;
+					}
+					//Radius Control
+					var rRad = sig / 9.;					
+					inst.oRadiusX = inst.oRadiusX + util.getRandom( rRad * 2, -rRad ) * screenSize.x;
+					inst.oRadiusY = inst.oRadiusY + util.getRandom( rRad * 2, -rRad ) * screenSize.y;
+					if ( k == "stars" && inst.oRadiusX > screenSize.x )
+						inst.oRadiusX = screenSize.x;	
+					if ( k == "stars" && inst.oRadiusY > screenSize.y )
+						inst.oRadiusY = screenSize.y;				
 				}
 			}
 		}	
@@ -135,7 +170,8 @@ function initObjects() {
 		if ( timings.hasOwnProperty(k) ) {
 			if ( timings[k][0] ) 
 				continue;
-			if ( timings[k][1] > timers["global"].elapsedTime() ) {
+			if ( timers["global"].elapsedTime() > timings[k][1] ) {
+				post( util.getTime() + timings[k][1] + "ms timer reached.\n" );
 				timings[k][0] = true;
 				//Blue Warriors
 				if ( k == "blue_warriors" ) {
@@ -143,16 +179,12 @@ function initObjects() {
 					for ( var i = 0; i < quantity["blue_warriors"]; i++ ) {
 						var prefix = "settings::" + i + "::";
 						var data = getInstSettings( dicts["blue_warriors_settings"], i );
-						//post(data[0]+"\n");
-						instances["blue_warriors"].push( new VelSketchInst( data[0], data[1], data[2], data[3] ) );
-						/*
-						var theta = util.getTheta( data[0], centerOfMass );
-						var oRadiusX =  util.getDistance(data[0], centerOfMass);
-						var oRadiusY =  oRadiusX * (screenSize.y / screenSize.x);
-						var speed = dicts["star_settings"].get( prefix + "speed") * ( util.getDistance(data[0], centerOfMass) / radiusToSpeedRatio );
-						instances["stars"].push( new AbsSketchInst( data[0], data[1], data[2], data[3], theta, oRadiusX, oRadiusY, speed ) );
-						*/
+						var war = new VelSketchInst( data[0], data[1], data[2], data[3], data[4], data[5], data[6] );
+						war.center = instances["stars"][Math.floor( util.getRandom( instances["stars"].length, 0 ) )].position;
+						war.theta = util.getTheta( war.position , war.center );
+						instances["blue_warriors"].push( war );						
 					}
+					post( util.getTime() + quantity["blue_warriors"] + " blue warrior instance(s) instantiated.\n" );
 				}
 
 			}
@@ -172,8 +204,14 @@ function getInstSettings( dict, iteration ) {
 									dict.get( prefix + "col_b" )
 									),
 						dict.get( prefix + "radius" ),
-						dict.get( prefix + "type")
+						dict.get( prefix + "type")						
  						);
+	if ( typeof dict.get( prefix + "oRadiusX" ) !== "undefined" )
+		a.push( dict.get( prefix + "oRadiusX" ) );
+	if ( typeof dict.get( prefix + "oRadiusY" ) !== "undefined" )
+		a.push( dict.get( prefix + "oRadiusY" ) );
+	if ( typeof dict.get( prefix + "speed" ) !== "undefined" )
+		a.push( dict.get( prefix + "speed" ) );
 	return a;
 
 }
