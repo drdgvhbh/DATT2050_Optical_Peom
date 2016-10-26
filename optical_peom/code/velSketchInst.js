@@ -31,6 +31,10 @@ var VelSketchInst = (function() {
 
 		getBaseColor : function() {
 			return this.sketchInst.getBaseColor( this.baseColor );
+		},
+
+		checkBounds : function() {
+			this.sketchInst.checkBounds( this );
 		}
 
 	};

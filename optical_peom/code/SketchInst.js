@@ -5,6 +5,7 @@ var SketchInst = ( function() {
 
 	function init() {
 		// Private methods and variables
+		var _G = new Global("global");
 		return {
 			// Public methods and variables
 
@@ -26,8 +27,18 @@ var SketchInst = ( function() {
 					a.push( baseColor[i] );
 				}
 				return a;
-			}
+			},
 
+			checkBounds : function( sketchInst ) {
+				if ( Math.abs( sketchInst.position.x ) >= _G.screenSize.x ) {
+					var sign = sketchInst.position.x / Math.abs(sketchInst.position.x);
+					sketchInst.position.x = _G.screenSize.x * sign * -1.0;
+				}
+				if ( Math.abs( sketchInst.position.y ) >= _G.screenSize.y ) {
+					var sign = sketchInst.position.y / Math.abs(sketchInst.position.y);
+					sketchInst.position.y = _G.screenSize.y * sign * -1.0;
+				}
+			}
 		};
 	};
 

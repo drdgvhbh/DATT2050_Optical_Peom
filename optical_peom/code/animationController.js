@@ -8,14 +8,15 @@ autowatch = 1;
 
 var paused = false; // Is it paused?
 
-var RGB_MAX = 255;
-var RGB_MIN = 0;
-var FPS = 60;
+var _G = new Global("global");
+_G.screenSize = new Vector( 1.7, 1. );
+_G.screenPixelSize = { x : 1920, y : 1080 };
+_G.FPS = 60;
+_G.RGB_MAX = 255;
+_G.RGB_MIN = 0;
 
 var sketch; //Global jit.gl.sketch object
 
-var screenSize = new Vector( 1.7, 1. );
-var screenPixelSize = { x : 1920, y : 1080 };
 var centerOfMass = new Vector( 0., 0. );
 
 var quantity = {
@@ -58,7 +59,7 @@ function setup() {
 		var data = getInstSettings( dicts["star_settings"], i );
 		var theta = util.getTheta( data[0], centerOfMass );
 		var oRadiusX =  util.getDistance(data[0], centerOfMass);
-		var oRadiusY =  oRadiusX * (screenSize.y / screenSize.x);
+		var oRadiusY =  oRadiusX * (_G.screenSize.y / _G.screenSize.x);
 		var speed = dicts["star_settings"].get( prefix + "speed") * ( util.getDistance(data[0], centerOfMass) / radiusToSpeedRatio );
 		instances["stars"].push( new AbsSketchInst( data[0], data[1], data[2], data[3], theta, oRadiusX, oRadiusY, speed ) );
 
@@ -74,11 +75,11 @@ function setup() {
 function update() {
 	outlet( 0, timers["global"].elapsedSeconds() );
 	//Create objects at a timepoint
-	initObjects();
+	checkTime();
 	//Update Stars
 	for ( var i = 0; i < instances["stars"].length; i++ ) {
 		var star = instances["stars"][i];
-		star.theta = star.theta + util.toRadians( 360 / ( FPS * star.speed ) );
+		star.theta = star.theta + util.toRadians( 360 / ( _G.FPS * star.speed ) );
 		//post("A: "+star.speed+"\n");
 		star.position.x = star.oRadiusX * Math.cos(star.theta);
 		star.position.y = star.oRadiusY * Math.sin(star.theta);
@@ -87,13 +88,15 @@ function update() {
 	//Update Blue Warriors
 	for ( var i = 0; i < instances["blue_warriors"].length; i++ ) {
 		var war  = instances["blue_warriors"][i];
+		//Check Bounds
+		war.checkBounds();
 		//Curent Projected Position
 		var cPP = new Vector();
 		cPP.x = war.oRadiusX * Math.cos(war.theta) + war.center.x;
 		cPP.y = war.oRadiusY * Math.sin(war.theta) + war.center.y;
 		var prefix = "settings::" + i + "::";
 		war.speed = dicts["blue_warriors_settings"].get( prefix + "speed") * ( util.getDistance( cPP, war.center) / radiusToSpeedRatio );
-		war.theta = war.theta + util.toRadians( 360 / ( FPS * war.speed ) );
+		war.theta = war.theta + util.toRadians( 360 / ( _G.FPS * war.speed ) );
 		//Projected Position
 		var pP = new Vector();
 		pP.x = war.oRadiusX * Math.cos(war.theta) + war.center.x;
@@ -106,7 +109,7 @@ function update() {
 		//dir.limit(0.001);
 		war.acceleration = dir;
 		war.velocity.add(war.acceleration);
-		war.velocity.limit(0.01);
+		war.velocity.limit(0.011);
 		war.position.add(war.velocity);
 		//war.position = pP;		
 	}
@@ -148,24 +151,30 @@ function ambient( sig ) {
 						ambientExp = ambientExp - 0.1;
 					}
 					//Radius Control
-					var rRad = sig / 9.;					
-					inst.oRadiusX = inst.oRadiusX + util.getRandom( rRad * 2, -rRad ) * screenSize.x;
-					inst.oRadiusY = inst.oRadiusY + util.getRandom( rRad * 2, -rRad ) * screenSize.y;
-					if ( k == "stars" && inst.oRadiusX > screenSize.x )
-						inst.oRadiusX = screenSize.x;	
-					if ( k == "stars" && inst.oRadiusY > screenSize.y )
-						inst.oRadiusY = screenSize.y;				
+					var divisor = 9.;
+					if ( k != "stars" ) {
+						divisor = 6.;
+					}
+					var rRad = sig / divisor;					
+					inst.oRadiusX = inst.oRadiusX + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.x;
+					post( divisor + "\n" );	
+					inst.oRadiusY = inst.oRadiusY + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.y;
+					if ( k == "stars" && inst.oRadiusX > _G.screenSize.x )
+						inst.oRadiusX = _G.screenSize.x;	
+					if ( k == "stars" && inst.oRadiusY > _G.screenSize.y )
+						inst.oRadiusY = _G.screenSize.y;				
 				}
 			}
 		}	
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//When to create an object
+//When to create an object or update it
 var timings = {
+	"opening_star" : new Array( false, 0. ),
 	"blue_warriors" : new Array( false, 5000.0 ) 
 }
-function initObjects() {
+function checkTime() {
 	for ( var k in timings ) {
 		if ( timings.hasOwnProperty(k) ) {
 			if ( timings[k][0] ) 
@@ -173,6 +182,10 @@ function initObjects() {
 			if ( timers["global"].elapsedTime() > timings[k][1] ) {
 				post( util.getTime() + timings[k][1] + "ms timer reached.\n" );
 				timings[k][0] = true;
+				//Opening Star creation 
+				if ( k == "opening_star") {
+					openingStarRadius();
+				}
 				//Blue Warriors
 				if ( k == "blue_warriors" ) {
 					//Intialize stars
@@ -191,13 +204,18 @@ function initObjects() {
 		}
 	}
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///Slowly increases radius of each star based on the "drum" beat
+var openingStarInterval = 
+function openingStarRadius() {
 
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function getInstSettings( dict, iteration ) {
 	var prefix = "settings::" + iteration + "::";
 	// Position, Color 
-	var a = new Array( 	new Vector( util.getRandomDictionaryPoint( dict, prefix + "max_pos_x", prefix + "min_pos_x", screenSize.x  ),
-									util.getRandomDictionaryPoint( dict, prefix + "max_pos_y", prefix + "min_pos_y", screenSize.y  )
+	var a = new Array( 	new Vector( util.getRandomDictionaryPoint( dict, prefix + "max_pos_x", prefix + "min_pos_x", _G.screenSize.x  ),
+									util.getRandomDictionaryPoint( dict, prefix + "max_pos_y", prefix + "min_pos_y", _G.screenSize.y  )
 									),
 						new Array(	dict.get( prefix + "col_r" ),
 									dict.get( prefix + "col_g" ),
