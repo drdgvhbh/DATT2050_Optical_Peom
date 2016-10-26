@@ -53,6 +53,7 @@ function setup() {
 	initSettings();
 	sketch = new JitterObject( "jit.gl.sketch", "Stars_And_Warriors" );
 
+	/*
 	//Intialize stars
 	for ( var i = 0; i < quantity["stars"]; i++ ) {
 		var prefix = "settings::" + i + "::";
@@ -65,6 +66,8 @@ function setup() {
 
 	}
 	post( util.getTime() + quantity["stars"] + " star instance(s) instantiated.\n" );
+	*/
+	
 
 	timers["global"].start();
 	post( util.getTime() + "Global Timer started.\n" );
@@ -157,7 +160,6 @@ function ambient( sig ) {
 					}
 					var rRad = sig / divisor;					
 					inst.oRadiusX = inst.oRadiusX + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.x;
-					post( divisor + "\n" );	
 					inst.oRadiusY = inst.oRadiusY + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.y;
 					if ( k == "stars" && inst.oRadiusX > _G.screenSize.x )
 						inst.oRadiusX = _G.screenSize.x;	
@@ -171,7 +173,6 @@ function ambient( sig ) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //When to create an object or update it
 var timings = {
-	"opening_star" : new Array( false, 0. ),
 	"blue_warriors" : new Array( false, 5000.0 ) 
 }
 function checkTime() {
@@ -180,15 +181,11 @@ function checkTime() {
 			if ( timings[k][0] ) 
 				continue;
 			if ( timers["global"].elapsedTime() > timings[k][1] ) {
-				post( util.getTime() + timings[k][1] + "ms timer reached.\n" );
-				timings[k][0] = true;
-				//Opening Star creation 
-				if ( k == "opening_star") {
-					openingStarRadius();
-				}
+				post( util.getTime() + timings[k][1] + "ms timer reached.\n" );	
 				//Blue Warriors
 				if ( k == "blue_warriors" ) {
 					//Intialize stars
+					timings[k][0] = true;
 					for ( var i = 0; i < quantity["blue_warriors"]; i++ ) {
 						var prefix = "settings::" + i + "::";
 						var data = getInstSettings( dicts["blue_warriors_settings"], i );
@@ -197,7 +194,7 @@ function checkTime() {
 						war.theta = util.getTheta( war.position , war.center );
 						instances["blue_warriors"].push( war );						
 					}
-					post( util.getTime() + quantity["blue_warriors"] + " blue warrior instance(s) instantiated.\n" );
+					post( util.getTime() + instances["blue_warriors"].length + " total blue warrior instance(s) instantiated.\n" );
 				}
 
 			}
@@ -206,8 +203,44 @@ function checkTime() {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///Slowly increases radius of each star based on the "drum" beat
-var openingStarInterval = 
-function openingStarRadius() {
+var openingStarInterval = 0;
+var openingStarThreshold = 0.01;
+var starTimings = {
+	0 : new Array( true, 0. ),
+	1 : new Array( true, 4450. ),
+	2 : new Array( true, 8800. ),
+	3 : new Array( true, 13000. ),
+	4 : new Array( true, 17400. ),
+	5 : new Array( true, 26100. ),
+	6 : new Array( true, 35000. )
+}
+function openingStarGen( drum ) {
+	if ( starTimings[instances["stars"].length][0] && timers["global"].elapsedTime() > starTimings[instances["stars"].length][1] ) {
+		if ( drum > openingStarThreshold ) {
+
+			//Intialize star
+			post( instances["stars"].length+", "+quantity["stars"] +"\n" );
+			if ( instances["stars"].length < quantity["stars"] ) {
+				//post("hey\n");
+				var i = instances["stars"].length;
+				var prefix = "settings::" + i + "::";
+				var data = getInstSettings( dicts["star_settings"], i );
+				var theta = util.getTheta( data[0], centerOfMass );
+				var oRadiusX =  util.getDistance(data[0], centerOfMass);
+				var oRadiusY =  oRadiusX * (_G.screenSize.y / _G.screenSize.x);
+				var speed = dicts["star_settings"].get( prefix + "speed") * ( util.getDistance(data[0], centerOfMass) / radiusToSpeedRatio );
+				starTimings[instances["stars"].length][0] = false;
+				instances["stars"].push( new AbsSketchInst( data[0], data[1], data[2], data[3], theta, oRadiusX, oRadiusY, speed ) );
+				post( util.getTime() + instances["stars"].length + " total star instance(s) instantiated.\n" );
+				
+
+				for ( var i = 0; i < instances["blue_warriors"].length; i++ ) {
+					var war = instances["blue_warriors"][i];
+					war.center = instances["stars"][Math.floor( util.getRandom( instances["stars"].length, 0 ) )].position;				
+				}
+			}
+		}
+	}
 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
