@@ -17,10 +17,9 @@ var Timers = ( function() {
 			if ( this.paused ) {
 				this._pausedDuration = currentTime.getTime() - this._pause.getTime();
 			}
-
 			var diff = currentTime.getTime() - this._start.getTime() - this._pausedDuration;
 			if ( diff > this.interval ) {
-				this._start.setTime( this._start.getTime() + parseInt(diff) * this.interval );
+				this._start.setTime( this._start.getTime() + parseInt(diff) - (parseInt(diff) % this.interval) );
 				return true;  
 			}
 			return false;

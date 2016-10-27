@@ -12,7 +12,7 @@
 			"col_b" : 0.10980,
 			"radius" : 0.02,
 			"type" : "circle",
-			"speed" : "5.0"
+			"speed" : "5.5"
 		}
 ,
 		"1" : 
@@ -26,7 +26,7 @@
 			"col_b" : 0.07451,
 			"radius" : 0.023,
 			"type" : "circle",
-			"speed" : "4.0"
+			"speed" : "4.5"
 		}
 ,
 		"2" : 
@@ -40,7 +40,7 @@
 			"col_b" : 0.07451,
 			"radius" : 0.026,
 			"type" : "circle",
-			"speed" : "3.0"
+			"speed" : "3.5"
 		}
 ,
 		"3" : 
@@ -54,7 +54,7 @@
 			"col_b" : 0.07059,
 			"radius" : 0.029,
 			"type" : "circle",
-			"speed" : "2.0"
+			"speed" : "2.5"
 		}
 	}
 }

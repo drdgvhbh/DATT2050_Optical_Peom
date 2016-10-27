@@ -9,6 +9,7 @@ var VelSketchInst = (function() {
 		this.color = col || new Array( 0., 0., 0. );
 		this.baseColor = new Array( col[0], col[1], col[2] );
 		this.radius = radius || 0.;
+		this.baseRadius = radius;
 		this.type = type || "circle";
 		this.velocity = new Vector();
 		this.oRadiusX = oRadX;
@@ -18,14 +19,17 @@ var VelSketchInst = (function() {
 		this.acceleration = new Vector();
 		this.theta = 0;		
 		this.sketchInst = SketchInst.getInstance();
+		this.bDraw = true;
 	}
 
 	VelSketchInst.prototype = {
 		draw : function( sketchObj, radius ) {
-			if (typeof radius === "undefined" ) {
-				this.sketchInst.draw( sketchObj, this.radius, this.type );
-			} else {
-				this.sketchInst.draw( sketchObj, radius, this.type );
+			if (this.bDraw) {
+				if (typeof radius === "undefined" ) {
+					this.sketchInst.draw( sketchObj, this.radius, this.type );
+				} else {
+					this.sketchInst.draw( sketchObj, radius, this.type );
+				}
 			}
 		},
 

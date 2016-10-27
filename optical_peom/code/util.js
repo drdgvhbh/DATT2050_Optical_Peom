@@ -85,6 +85,11 @@ var Util = ( function() {
 				return instance.getRandom ( parseFloat( dict.get( max ) ) * multiplier - parseFloat( dict.get( min ) * multiplier ), 
 								 			parseFloat( dict.get( min ) ) * multiplier
 											);
+			},
+
+			scale : function ( v, min1, max1, min2, max2 ) {
+				var ratio = (v-min1) / (max1-min1);
+				return (max2-min2) * ratio + min2;
 			}
  
 		};

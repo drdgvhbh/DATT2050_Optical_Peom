@@ -17,14 +17,17 @@ var AbsSketchInst = (function() {
 		this.oProjRadiusY = oRadY;
 		this.speed = speed || 1; //Time it takes in seconds to complete one full revolution.
 		this.sketchInst = SketchInst.getInstance();
+		this.bDraw = true;
 	}
 
 	AbsSketchInst.prototype = {
 		draw : function( sketchObj, radius ) {
-			if (typeof radius === "undefined" ) {
-				this.sketchInst.draw( sketchObj, this.radius, this.type );
-			} else {
-				this.sketchInst.draw( sketchObj, radius, this.type );
+			if (this.bDraw) {
+				if (typeof radius === "undefined" ) {
+					this.sketchInst.draw( sketchObj, this.radius, this.type );
+				} else {
+					this.sketchInst.draw( sketchObj, radius, this.type );
+				}
 			}
 		},
 

@@ -42,11 +42,110 @@ var dicts = {
 
 //Timers
 var timers = {
-	"global" : new Timers()
+	"global" : new Timers(),
+	"violin" : new Timers( 85 )
+}
+
+var colorPallete = {
+	"stars" : new Array (
+		//217, 201, 28
+		new Array(
+			0.85098,
+			0.78824,
+			0.10980
+		),
+		//240, 199, 19
+		new Array(
+			0.94117,
+			0.78039,
+			0.07451
+		),
+		//226, 240, 19
+		new Array(
+			0.88627,
+			0.94117,
+			0.07451
+		),
+		//229, 169, 18
+		new Array(
+			0.89804,
+			0.66275,
+			0.07059
+		),
+		//144, 230, 18
+		new Array(
+			0.56471,
+			0.90196,
+			0.07059
+		)
+	),
+	"blue_warriors" : new Array(
+		//51, 189, 223
+		new Array(
+			0.2,
+			0.74118,
+			0.87451
+		),
+		//42, 236, 168
+		new Array(
+			0.16471,
+			0.92549,
+			0.65882
+		),
+		//44, 246, 233
+		new Array(
+			0.17255,
+			0.96471,
+			0.91373
+		),
+		//42, 95, 236
+		new Array(
+			0.16471,
+			0.37255,
+			0.92549
+		),
+		//44, 153, 246
+		new Array(
+			0.17255,
+			0.6,
+			0.96471
+		)
+	),
+	"red_warriors" : new Array(
+		//140, 11, 57
+		new Array(
+			0.54902,
+			0.04314,
+			0.22353
+		),
+		//163, 5, 140
+		new Array(
+			0.63926,
+			0.01961,
+			0.54902
+		),
+		//163, 12, 5
+		new Array(
+			0.63926,
+			0.04709,
+			0.01961
+		),
+		//153, 33, 4
+		new Array(
+			0.6,
+			0.12941,
+			0.01569
+		),
+		//125, 4, 153
+		new Array(
+			0.4902 ,
+			0.01569,
+			0.6
+		)
+	)
 }
 
 var util = Util.getInstance(); //Utility class
-
 
 setup();
 
@@ -79,6 +178,15 @@ function setup() {
 	post( util.getTime() + "Setup complete.\n" );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var distanceVel = {
+	0.5 : 0.033,
+	0.4 : 0.026,
+	0.3 : 0.020,
+	0.2 : 0.015,
+	"else" : 0.011 
+}
+var baseDistanceVelRatio = 1.0;
+var distanceVelRatio = 1.0;
 function update() {
 	outlet( 0, timers["global"].elapsedSeconds() );
 	//Create objects at a timepoint
@@ -126,19 +234,19 @@ function update() {
 			war.acceleration = dir;
 			war.velocity.add(war.acceleration);
 			if ( dist > 0.5 ) {
-				war.velocity.limit(0.033);
+				war.velocity.limit(distanceVel[0.5] * distanceVelRatio);
 			} else if ( dist > 0.4) {
-				war.velocity.limit(0.026);
+				war.velocity.limit(distanceVel[0.4] * distanceVelRatio);
 			} else if ( dist > 0.3) {
-				war.velocity.limit(0.020);
+				war.velocity.limit(distanceVel[0.3] * distanceVelRatio);
 			} else if ( dist > 0.2) {
-				war.velocity.limit(0.015);
+				war.velocity.limit(distanceVel[0.2] * distanceVelRatio);
 			} else if ( dist < 0.01 ) {
 				war.acceleration.limit(0.);
 				war.velocity.limit(0.001);
 			} else {
 				war.acceleration.limit(0.);
-				war.velocity.limit(0.011);
+				war.velocity.limit(distanceVel["else"] * distanceVelRatio);
 			}
 			
 			war.position.add(war.velocity);
@@ -162,7 +270,8 @@ function draw() {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var eraCTimings = {
-	0 : new Array( false, 0.0, 35000, 1., 0.5 )
+	0 : new Array( false, 0.0, 35000, 1., 0.5 ),
+	1 : new Array( false, 35000., 70000, 0.5, 0.75 )
 }
 var colorErase = new Array( "erase_color", 0., 0., 0., 1. );
 function eraseColour() {
@@ -181,7 +290,6 @@ function eraseColour() {
 				var ratio = elapsed / dur;
 				var change = ratio * distance;
 				colorErase[4] = eraCTimings[k][3] + change;
-				post(colorErase.toString()+"\n");
 				outlet( 1, colorErase );
 			}
 		}
@@ -255,6 +363,39 @@ function orbit( sig ) {
 			}
 		}	
 	}
+}	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function violin( sig ) {
+	var radCtrl = sig * 0.012;
+	if ( timers["global"].elapsedTime() > 35000 ) {
+		var randKey = Math.floor(util.getRandom(Object.keys(instances).length, 0));
+		var counter = 0;
+		distanceVelRatio = (baseDistanceVelRatio * sig) + 0.25;
+		if (timers["violin"].update( new Date() ) ) {
+			for ( var k in instances ) {
+				if ( instances.hasOwnProperty(k) ) {
+					var col = colorPallete[k][Math.floor(util.getRandom(5, 0))];
+					for ( var j = 0; j < instances[k].length; j++ ) {
+						var inst = instances[k][j];
+						if ( randKey == Object.keys(instances).length ) {
+							inst.baseColor = col;
+							inst.bDraw = true;
+							inst.radius = inst.baseRadius + radCtrl;
+						} else if ( counter == randKey ) {
+							inst.baseColor = col;			
+							inst.bDraw = true;
+							inst.radius = inst.baseRadius + radCtrl;
+						} else {						
+							inst.bDraw = false;
+							inst.radius = inst.baseRadius;
+						}
+					}
+					counter++;
+				}
+			}
+		}
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //When to create an object or update it
@@ -313,7 +454,6 @@ function openingStarGen( drum ) {
 		if ( drum > openingStarThreshold ) {
 
 			//Intialize star
-			post( instances["stars"].length+", "+quantity["stars"] +"\n" );
 			if ( instances["stars"].length < quantity["stars"] ) {
 				//post("hey\n");
 				var i = instances["stars"].length;
