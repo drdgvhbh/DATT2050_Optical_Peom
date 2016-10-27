@@ -5,7 +5,6 @@ include("velSketchInst.js");
 include("timers.js");
 
 autowatch = 1;
-outlets = 2;
 
 var paused = false; // Is it paused?
 
@@ -83,7 +82,6 @@ function update() {
 	outlet( 0, timers["global"].elapsedSeconds() );
 	//Create objects at a timepoint
 	checkTime();
-	eraseColour();
 	//Update Stars
 	for ( var i = 0; i < instances["stars"].length; i++ ) {
 		var star = instances["stars"][i];
@@ -161,33 +159,6 @@ function draw() {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var eraCTimings = {
-	0 : new Array( false, 0.0, 35000, 1., 0.5 )
-}
-var colorErase = new Array( "erase_color", 0., 0., 0., 1. );
-function eraseColour() {
-	if ( timers["global"].elapsedSeconds() > 0 ) {
-		for ( var k in eraCTimings ) {
-			if ( eraCTimings.hasOwnProperty(k) ) {
-				if (eraCTimings[k][0] || timers["global"].elapsedTime() < eraCTimings[k][1]) 
-					continue;
-				if ( timers["global"].elapsedTime() > eraCTimings[k][2] ) {
-					eraCTimings[k][0] = true;
-					continue;
-				}
-				var dur = eraCTimings[k][2] - eraCTimings[k][1];
-				var distance = eraCTimings[k][4] - eraCTimings[k][3];
-				var elapsed = timers["global"].elapsedTime() - eraCTimings[k][1];
-				var ratio = elapsed / dur;
-				var change = ratio * distance;
-				colorErase[4] = eraCTimings[k][3] + change;
-				post(colorErase.toString()+"\n");
-				outlet( 1, colorErase );
-			}
-		}
-	}
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var ambientExp = 105.0;
 var aExpThreshold = 150.0;
 var a2ExpThreshold = 125.0;
@@ -219,38 +190,21 @@ function ambient( sig ) {
 function orbit( sig ) {
 	if ( timers["global"].elapsedSeconds() > 0 ) {
 		for ( var k in instances ) {
-			if ( instances.hasOwnProperty(k) ) {								
+			if ( instances.hasOwnProperty(k) ) {
+				if ( k == "stars")
+					continue;
 				for ( var j = 0; j < instances[k].length; j++ ) {
-					if ( k != "stars") {
-						var inst = instances[k][j];				
-						//Orbit Control
-						var mult = 0.01;
-						var rRad = sig * mult;		
-						inst.oRadiusX = inst.oRadiusX + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.x;
-						inst.oRadiusY = inst.oRadiusY + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.y;				
-					} else {
-						var inst = instances[k][j];				
-						//Orbit Control for Stars
-						var incr = 0.002;
-						var mult = 0.15;
-						var rRad = sig * mult;		
-						inst.oProjRadiusX = Math.abs(inst.oProjRadiusX + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.x);
-						inst.oProjRadiusY = Math.abs(inst.oProjRadiusY + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.y);
-						if ( Math.abs(inst.oProjRadiusX) > _G.screenSize.x )
-							inst.oProjRadiusX = _G.screenSize.x;	
-						if ( Math.abs(inst.oProjRadiusY)  > _G.screenSize.y )
-							inst.oProjRadiusY = _G.screenSize.y;
-						if ( Math.abs(inst.oRadiusX) < inst.oProjRadiusX  ) {
-							inst.oRadiusX = Math.abs(inst.oRadiusX) + incr;
-						} else {
-							inst.oRadiusX = Math.abs(inst.oRadiusX) - incr;
-						}
-						if ( Math.abs(inst.oRadiusY) < inst.oProjRadiusY  ) {
-							inst.oRadiusY =  Math.abs(inst.oRadiusY)+ incr;
-						} else {
-							inst.oRadiusY =  Math.abs(inst.oRadiusY) - incr;
-						}
-					}
+					var inst = instances[k][j];				
+					//Orbit Control
+					var mult = 0.01;
+					var rRad = sig * mult;	
+					//post(rRad+"\n");				
+					inst.oRadiusX = inst.oRadiusX + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.x;
+					inst.oRadiusY = inst.oRadiusY + util.getRandom( rRad * 2, -rRad ) * _G.screenSize.y;
+					if ( k == "stars" && inst.oRadiusX > _G.screenSize.x )
+						inst.oRadiusX = _G.screenSize.x;	
+					if ( k == "stars" && inst.oRadiusY > _G.screenSize.y )
+						inst.oRadiusY = _G.screenSize.y;
 				}
 			}
 		}	

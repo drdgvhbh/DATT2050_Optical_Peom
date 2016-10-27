@@ -2,8 +2,8 @@
 	"name" : "optical_peom",
 	"version" : 1,
 	"creationdate" : 3559918250,
-	"modificationdate" : 3560163385,
-	"viewrect" : [ 762.0, 170.0, 299.0, 541.0 ],
+	"modificationdate" : 3560340043,
+	"viewrect" : [ 0.0, 22.0, 1920.0, 984.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
 	"showdependencies" : 1,
@@ -76,6 +76,11 @@
 			}
 ,
 			"blue_warriors_settings.json" : 			{
+				"kind" : "json",
+				"local" : 1
+			}
+,
+			"red_warriors_settings.json" : 			{
 				"kind" : "json",
 				"local" : 1
 			}

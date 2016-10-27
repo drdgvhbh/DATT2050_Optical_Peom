@@ -13,6 +13,8 @@ var AbsSketchInst = (function() {
 		this.theta = theta || 0.;
 		this.oRadiusX = oRadX;
 		this.oRadiusY = oRadY;
+		this.oProjRadiusX = oRadX;
+		this.oProjRadiusY = oRadY;
 		this.speed = speed || 1; //Time it takes in seconds to complete one full revolution.
 		this.sketchInst = SketchInst.getInstance();
 	}
