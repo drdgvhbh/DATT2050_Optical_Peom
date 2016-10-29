@@ -1,0 +1,36 @@
+{
+	"settings" : 
+	{
+		"0" : 
+		{
+			"max_pos_x" : 0.0,
+			"min_pos_x" : -0.0,
+			"max_pos_y" : -1.1,
+			"min_pos_y" : -1.1,
+			"col_r" : 0.25882,
+			"col_g" : 0.59216,
+			"col_b" : 0.85098,
+			"oRadiusX" : 1.0,
+			"oRadiusY" : 1.0,	
+			"radius" : 0.05,
+			"type" : "framecircle",
+			"speed" : "4.9"
+		}
+,
+		"1" : 
+		{
+			"max_pos_x" : 0.0,
+			"min_pos_x" : -0.0,
+			"max_pos_y" : -1.1,
+			"min_pos_y" : -1.1,
+			"col_r" : 0.84706,
+			"col_g" : 0.51765,
+			"col_b" : 0.25882,
+			"oRadiusX" : 1.0,
+			"oRadiusY" : 1.0,	
+			"radius" : 0.05,
+			"type" : "framecircle",
+			"speed" : "4.9"
+		}
+	}
+}

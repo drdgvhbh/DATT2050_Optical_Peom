@@ -24,7 +24,8 @@ var centerOfMass = new Vector( 0., 0. );
 var quantity = {
 	"stars" : 4,
 	"blue_warriors" : 20,
-	"red_warriors" : 20
+	"red_warriors" : 20,
+	"dancers" : 2
 }
 
 //Container for Instances
@@ -32,20 +33,22 @@ var instances =  {
 	"stars" : new Array(),
 	"blue_warriors" : new Array(),
 	"red_warriors" : new Array(),
-	"hunter_planes" : new Array()
+	"hunter_planes" : new Array(),
+	"dancers" : new Array()
 }
 
 //Settings container
 var dicts = {
 	"star_settings" : new Dict( "star_settings" ),
 	"blue_warriors_settings" : new Dict( "blue_warriors_settings" ),
-	"red_warriors_settings" : new Dict( "red_warriors_settings" )
+	"red_warriors_settings" : new Dict( "red_warriors_settings" ),
+	"dancers_settings" : new Dict( "dancers_settings" )
 }
 
 //Timers
 var timers = {
 	"global" : new Timers(),
-	"violin" : new Timers( 85 ),
+	"violin" : new Timers( 102 ),
 	"hunt" : new Timers( 85 ),
 	"abolishHunter" : new Timers( 130 )
 }
@@ -155,17 +158,32 @@ var colorPallete = {
 			0.3098,
 			0.0078
 		),
-		new Array( //Split Complement
-			//1, 217, 186
+		//1, 217, 186
+		new Array( //Split Complement			
 			0.00392,
 			0.85098,
 			0.72941
 		),
-		new Array( //Split Complement
-			//1, 32, 217
+		//1, 32, 217
+		new Array( //Split Complement			
 			0.00392,
 			0.12549,
 			0.72941
+		)
+	),
+
+	"dancers" : new Array (
+		//66, 151, 217
+		new Array(
+			0.25882,
+			0.59216,
+			0.85098
+		),
+		//216, 132, 66
+		new Array(
+			0.84706,
+			0.51765,
+			0.25882
 		)
 	)
 }
@@ -212,6 +230,7 @@ var distanceVel = {
 }
 var baseDistanceVelRatio = 1.0;
 var distanceVelRatio = 1.0;
+var dancerRatio = new Vector(3.,1.);
 function update() {
 	outlet( 0, timers["global"].elapsedSeconds() );
 	//Create objects at a timepoint
@@ -278,7 +297,7 @@ function update() {
 			//war.position = pP;		
 		}
 	}
-	if ( timers["global"].elapsedTime() > 87500 ) {
+	if ( timers["global"].elapsedTime() > 87500  ) {
 		for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
 			var inst = instances["hunter_planes"][i];
 			inst.checkBounds();
@@ -287,6 +306,19 @@ function update() {
 		}
 	}
 
+	for ( var i = 0; i < instances["dancers"].length; i++ ) {
+		var dancer = instances["dancers"][i];
+		if ( i == 0) {
+			dancer.theta = dancer.theta + util.toRadians( 360 / ( _G.FPS * dancer.speed ) );
+		} else {
+			dancer.theta = dancer.theta - util.toRadians( 360 / ( _G.FPS * dancer.speed ) );
+		}
+		
+		//post("A: "+star.speed+"\n");
+		dancer.position.x = dancer.oRadiusX * Math.cos(dancer.theta * dancerRatio.x) * _G.screenSize.x;
+		dancer.position.y = dancer.oRadiusY * Math.sin(dancer.theta * dancerRatio.y) -0.1;
+
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function draw() {
@@ -307,7 +339,15 @@ var timings = {
 	"blue_warriors" : new Array( false, 4450.0 ),
 	"red_warriors" : new Array( false, 17400.0 ), 
 	"hunter_planes" : new Array( false, 70000.0 ),
-	"vel_hunters" : new Array( false, 87500.0 ) 
+	"vel_hunters" : new Array( false, 87500.0 ),
+	"dancers1" : new Array( false, 104000.0 ),
+	"killDancers1" : new Array( false, 109000.0 ),
+	"dancers2" : new Array( false, 113500.0 ),
+	"killDancers2" : new Array( false, 118000.0 ),
+	"dancers3" : new Array( false, 122400.0 ),
+	"killDancers3" : new Array( false, 127000.0 ),
+	"dancers4" : new Array( false, 131000.0 ),
+	"killDancers4" : new Array( false, 135500.0 )
 }
 function checkTime() {
 	for ( var k in timings ) {
@@ -337,6 +377,7 @@ function checkTime() {
 							continue;
 						if ( instances.hasOwnProperty(o) ) {
 							instances[o] = new Array();
+							post( util.getTime() + "All " + o + " instances cleared.\n" );
 						}
 					}
 				}
@@ -345,6 +386,29 @@ function checkTime() {
 					for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
 						instances["hunter_planes"][i].velocity = new Vector(0., -0.1);
 					}
+				}
+				if ( k == "dancers1" || k == "dancers2" || k == "dancers3" || k == "dancers4" ) {
+					timings[k][0] = true;
+					for ( var i = 0; i < quantity["dancers"]; i++ ) {
+						var prefix = "settings::" + i + "::";
+						var data = getInstSettings( dicts["dancers" + "_settings"], i );
+						//post(data[0]+"\n");
+						var dancer = new AbsSketchInst( data[0], data[1], data[2], data[3], 1.5 * Math.PI, data[4], data[5], data[6]  );
+						instances["dancers"].push( dancer );
+						post( util.getTime() + instances["dancers"].length + " total " + "dancers" + " instance(s) instantiated.\n" );						
+					}
+
+				}
+
+				if ( k == "killDancers1" || k == "killDancers2" || k == "killDancers3" || k == "killDancers4" ) {
+					timings[k][0] = true;
+					for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
+						instances["hunter_planes"][i].velocity = new Vector(0., -0.1);
+					}
+					instances["dancers"] = new Array();
+					huntRad = 0.025;
+					var mult = parseInt(k.charAt(11));
+					dancerRatio = new Vector(3.+ 2. * mult,1.);
 				}
 
 			}
@@ -361,8 +425,15 @@ function checkTime() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var eraCTimings = {
 	0 : new Array( false, 0.0, 35000, 1., 0.5 ),
-	1 : new Array( false, 35000., 71000, 0.5, 0.65 ),
-	2 : new Array( false, 87500., 105000, 1.0, 0.85 )
+	1 : new Array( false, 35000., 70000., 0.5, 0.65 ),
+	2 : new Array( false, 87500., 104500., 1.0, 0.85 ),
+	3 : new Array( false, 104000., 108999., 0.85, 0.15 ),
+	4 : new Array( false, 109000., 113499., 0.15, 0.85 ),
+	5 : new Array( false, 113500., 117999., 0.85, 0.15 ),
+	6 : new Array( false, 118000., 122399., 0.15, 0.85 ),
+	7 : new Array( false, 122400., 126999., 0.85, 0.15 ),
+	8 : new Array( false, 127000., 130999., 0.15, 0.85 ),
+	9 : new Array( false, 131000., 135500., 0.85, 0.15 )
 }
 var colorErase = new Array( "erase_color", 0., 0., 0., 1. );
 function eraseColour() {
@@ -458,13 +529,15 @@ function orbit( sig ) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var violinOld = 0;
 function violin( sig ) {
-	if ( Math.abs( sig - violinOld ) > 0.77 ) {
+	//post("Sig: " + sig + " Diff: " + Math.abs( sig - violinOld ) +"\n");
+	if ( (Math.abs( sig - violinOld ) > 0.55) && Math.abs(sig) > 0.4 ) {
+		violinOld = sig;
 		var absSig = Math.abs(sig);
 		var radCtrl = absSig * 0.013;
-		if ( timers["global"].elapsedTime() > 35000 &&  timers["global"].elapsedSeconds() < 70. ) {
+		if ( timers["global"].elapsedTime() > 35000 &&  timers["global"].elapsedTime() < 70000 ) {
 			centerOfMass.x = util.getRandom((absSig*20), absSig*10 );
 			//post(centerOfMass.toString()+"\n");
-			var randKey = Math.floor(util.getRandom(Object.keys(instances).length, 0));
+			var randKey = Math.floor(util.getRandom(3, 0));
 			var counter = 0;
 			distanceVelRatio = (baseDistanceVelRatio * absSig) + 0.25;
 			if (timers["violin"].update( new Date() ) ) {
@@ -473,7 +546,7 @@ function violin( sig ) {
 						var col = colorPallete[k][Math.floor(util.getRandom(5, 0))];
 						for ( var j = 0; j < instances[k].length; j++ ) {
 							var inst = instances[k][j];
-							if ( randKey == Object.keys(instances).length ) {
+							if ( randKey == 3 ) {
 								inst.baseColor = col;
 								inst.bDraw = true;
 								inst.radius = inst.baseRadius + radCtrl;
@@ -514,6 +587,8 @@ var starTimings = {
 	3 : new Array( true, 26100. )
 }
 function openingStarGen( drum ) {
+	if ( timers["global"].elapsedTime() > 35000 )
+		return;
 	if ( instances["stars"].length < quantity["stars"] && starTimings[instances["stars"].length][0] 
 			&& timers["global"].elapsedTime() > starTimings[instances["stars"].length][1] ) {
 		if ( drum > openingStarThreshold ) {
@@ -569,7 +644,11 @@ var huntRad = 0.025;
 var huntXLimit = 0;
 function hunt( sig ) {
 	if ( Math.abs(sig) > 0.95 ) {
-		if ( timers["global"].elapsedTime() >= 71000 && timers["global"].elapsedTime() < 87500 ) {
+		if ( (timers["global"].elapsedTime() >= 70000 && timers["global"].elapsedTime() < 87500 ) 
+				|| (timers["global"].elapsedTime() > 109000 && timers["global"].elapsedTime() < 113500)
+				|| (timers["global"].elapsedTime() > 118000 && timers["global"].elapsedTime() < 122400)
+				|| (timers["global"].elapsedTime() > 127000 && timers["global"].elapsedTime() < 131000) 
+				|| (timers["global"].elapsedTime() > 135500 ) ) {
 			if (timers["hunt"].update( new Date() ) ) {
 				var pX = util.getRandom(huntXLimit*2,-huntXLimit);
 				var pY = util.getRandom(_G.screenSize.y*2,-_G.screenSize.y);
@@ -599,11 +678,11 @@ function hunt( sig ) {
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function greaterHunt( sig ) {
-	if ( timers["global"].elapsedTime() > 87500. ) {
+	if ( timers["global"].elapsedTime() > 87500 ) {
 		//post(sig+"\n");
 		for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
 			var inst = instances["hunter_planes"][i];
-			inst.velocity = new Vector(sig*0.8, inst.velocity.y);
+			inst.velocity = new Vector(sig*0.8, -0.1);
 		}
 	}
 }
@@ -612,6 +691,8 @@ function abolishHunter() {
 	if (timers["abolishHunter"].update( new Date() ) ) {
 		if ( instances["hunter_planes"].length > 0 ) {
 			instances["hunter_planes"].pop();
+		} else {
+			post( util.getTime() + instances[k].length + "All hunter planes cleared.\n" );
 		}
 	}
 }
