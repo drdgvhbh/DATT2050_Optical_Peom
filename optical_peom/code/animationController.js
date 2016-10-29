@@ -48,9 +48,11 @@ var dicts = {
 //Timers
 var timers = {
 	"global" : new Timers(),
-	"violin" : new Timers( 102 ),
+	"violin" : new Timers( 85 ),
 	"hunt" : new Timers( 85 ),
-	"abolishHunter" : new Timers( 130 )
+	"abolishHunter" : new Timers( 130 ),
+	"abolishStar" : new Timers ( 1000 ),
+	"abolishWar" : new Timers ( 100 )
 }
 
 var colorPallete = {
@@ -241,8 +243,11 @@ function update() {
 		var star = instances["stars"][i];
 		star.theta = star.theta + util.toRadians( 360 / ( _G.FPS * star.speed ) );
 		//post("A: "+star.speed+"\n");
-		star.position.x = star.oRadiusX * Math.cos(star.theta);
-		star.position.y = star.oRadiusY * Math.sin(star.theta);
+		star.position.x = star.oRadiusX * Math.cos(star.theta) + centerOfMass.x;
+		star.position.y = star.oRadiusY * Math.sin(star.theta) + centerOfMass.y;
+		if ( timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000  ) {
+			abolish( instances["stars"], timers["abolishStar"], "stars" );
+		}	
 
 	}
 	//Update Blue and Red Warriors
@@ -294,15 +299,21 @@ function update() {
 			}
 			
 			war.position.add(war.velocity);
-			//war.position = pP;		
+			//war.position = pP;	
+			if ( timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000  ) {
+				abolish( instances[k], timers["abolishWar"], k );
+			}	
 		}
 	}
+
+
+
 	if ( timers["global"].elapsedTime() > 87500  ) {
 		for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
 			var inst = instances["hunter_planes"][i];
 			inst.checkBounds();
 			inst.position.add(inst.velocity);
-			abolishHunter();
+			abolish( instances["hunter_planes"], timers["abolishHunter"], "Hunter Planes");
 		}
 	}
 
@@ -338,7 +349,8 @@ function draw() {
 var timings = {
 	"blue_warriors" : new Array( false, 4450.0 ),
 	"red_warriors" : new Array( false, 17400.0 ), 
-	"hunter_planes" : new Array( false, 70000.0 ),
+	"cool_stars" : new Array( false, 66000 ),
+	"death_stars" : new Array( false, 80000.0 ),
 	"vel_hunters" : new Array( false, 87500.0 ),
 	"dancers1" : new Array( false, 104000.0 ),
 	"killDancers1" : new Array( false, 109000.0 ),
@@ -369,7 +381,24 @@ function checkTime() {
 					}
 					post( util.getTime() + instances[k].length + " total " + k + " instance(s) instantiated.\n" );
 				}
-				if ( k == "hunter_planes" ) {
+
+				if ( k == "cool_stars") {
+					timings[k][0] = true;
+					var counter = 0;
+					for ( var k in instances ) {
+						if ( instances.hasOwnProperty(k) ) {
+							for ( var j = 0; j < instances[k].length; j++ ) {
+								if (counter <= 2 && counter >= 0) {
+									var inst = instances[k][j];
+									inst.bDraw = true;
+									inst.radius = inst.baseRadius;
+								}
+							}
+						}
+						counter++;
+					}
+				}
+				if ( k == "death_stars" ) {
 					centerOfMass = new Vector( 0., 0. );
 					timings[k][0] = true;
 					for ( var o in instances ) {
@@ -530,12 +559,13 @@ function orbit( sig ) {
 var violinOld = 0;
 function violin( sig ) {
 	//post("Sig: " + sig + " Diff: " + Math.abs( sig - violinOld ) +"\n");
-	if ( (Math.abs( sig - violinOld ) > 0.55) && Math.abs(sig) > 0.4 ) {
+	if ( (Math.abs( sig - violinOld ) > 0.6) && Math.abs(sig) > 0.43 ) {
 		violinOld = sig;
 		var absSig = Math.abs(sig);
-		var radCtrl = absSig * 0.013;
-		if ( timers["global"].elapsedTime() > 35000 &&  timers["global"].elapsedTime() < 70000 ) {
-			centerOfMass.x = util.getRandom((absSig*20), absSig*10 );
+		var radCtrl = absSig * 0.015;
+		if ( (timers["global"].elapsedTime() > 35000 &&  timers["global"].elapsedTime() < 49000) 
+				|| (timers["global"].elapsedTime() > 51500 &&  timers["global"].elapsedTime() < 66000 ) ) {
+			centerOfMass.y = util.getRandom( absSig, -absSig*0.5 );
 			//post(centerOfMass.toString()+"\n");
 			var randKey = Math.floor(util.getRandom(3, 0));
 			var counter = 0;
@@ -687,12 +717,12 @@ function greaterHunt( sig ) {
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function abolishHunter() {
-	if (timers["abolishHunter"].update( new Date() ) ) {
-		if ( instances["hunter_planes"].length > 0 ) {
-			instances["hunter_planes"].pop();
+function abolish( instArray, timer, name ) {
+	if ( timer.update( new Date() ) ) {
+		if ( instArray.length > 0 ) {
+			instArray.pop();
 		} else {
-			post( util.getTime() + instances[k].length + "All hunter planes cleared.\n" );
+			post( util.getTime() + "All " + name + " cleared.\n" );
 		}
 	}
 }
