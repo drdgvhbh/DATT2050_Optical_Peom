@@ -10,7 +10,10 @@ var Timers = ( function() {
 
 	Timers.prototype = {
 		start : function() {
+			var _G = new Global("global");
 			this._start = new Date();
+			post(_G.timerOffset+"???");
+			this._start.setTime( this._start.getTime() - _G.timerOffset );
 		},
 
 		update : function ( currentTime ) {

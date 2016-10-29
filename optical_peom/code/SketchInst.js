@@ -17,6 +17,8 @@ var SketchInst = ( function() {
 					sketchObj.framecircle( radius );
 				} else if ( type == "sphere" ) {
 					sketchObj.sphere( radius );
+				} else if ( type == "plane" ) {
+					sketchObj.plane( radius );
 				}
 			},
 

@@ -45,9 +45,7 @@ var dicts = {
 //Timers
 var timers = {
 	"global" : new Timers(),
-	"violin" : new Timers( 85 ),
-	"hunt" : new Timers( 85 ),
-	"abolishHunter" : new Timers( 130 )
+	"violin" : new Timers( 85 )
 }
 
 var colorPallete = {
@@ -166,6 +164,12 @@ var colorPallete = {
 			0.00392,
 			0.12549,
 			0.72941
+		),
+		//217, 79, 2
+		new Array( //Complement
+			0.85098,
+			0.3098,
+			0.0078
 		)
 	)
 }
@@ -278,15 +282,6 @@ function update() {
 			//war.position = pP;		
 		}
 	}
-	if ( timers["global"].elapsedTime() > 87500 ) {
-		for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
-			var inst = instances["hunter_planes"][i];
-			inst.checkBounds();
-			inst.position.add(inst.velocity);
-			abolishHunter();
-		}
-	}
-
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function draw() {
@@ -306,8 +301,7 @@ function draw() {
 var timings = {
 	"blue_warriors" : new Array( false, 4450.0 ),
 	"red_warriors" : new Array( false, 17400.0 ), 
-	"hunter_planes" : new Array( false, 70000.0 ),
-	"vel_hunters" : new Array( false, 87500.0 ) 
+	"hunter_planes" : new Array( false, 70000.0 ) 
 }
 function checkTime() {
 	for ( var k in timings ) {
@@ -340,12 +334,6 @@ function checkTime() {
 						}
 					}
 				}
-				if ( k == "vel_hunters" ) {
-					timings[k][0] = true;
-					for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
-						instances["hunter_planes"][i].velocity = new Vector(0., -0.1);
-					}
-				}
 
 			}
 		}
@@ -361,8 +349,7 @@ function checkTime() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var eraCTimings = {
 	0 : new Array( false, 0.0, 35000, 1., 0.5 ),
-	1 : new Array( false, 35000., 71000, 0.5, 0.65 ),
-	2 : new Array( false, 87500., 105000, 1.0, 0.85 )
+	1 : new Array( false, 35000., 70000, 0.5, 0.65 )
 }
 var colorErase = new Array( "erase_color", 0., 0., 0., 1. );
 function eraseColour() {
@@ -456,38 +443,34 @@ function orbit( sig ) {
 	}
 }	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var violinOld = 0;
 function violin( sig ) {
-	if ( Math.abs( sig - violinOld ) > 0.77 ) {
-		var absSig = Math.abs(sig);
-		var radCtrl = absSig * 0.013;
-		if ( timers["global"].elapsedTime() > 35000 &&  timers["global"].elapsedSeconds() < 70. ) {
-			centerOfMass.x = util.getRandom((absSig*20), absSig*10 );
-			//post(centerOfMass.toString()+"\n");
-			var randKey = Math.floor(util.getRandom(Object.keys(instances).length, 0));
-			var counter = 0;
-			distanceVelRatio = (baseDistanceVelRatio * absSig) + 0.25;
-			if (timers["violin"].update( new Date() ) ) {
-				for ( var k in instances ) {
-					if ( instances.hasOwnProperty(k) ) {
-						var col = colorPallete[k][Math.floor(util.getRandom(5, 0))];
-						for ( var j = 0; j < instances[k].length; j++ ) {
-							var inst = instances[k][j];
-							if ( randKey == Object.keys(instances).length ) {
-								inst.baseColor = col;
-								inst.bDraw = true;
-								inst.radius = inst.baseRadius + radCtrl;
-							} else if ( counter == randKey ) {
-								inst.baseColor = col;			
-								inst.bDraw = true;
-								inst.radius = inst.baseRadius + radCtrl;
-							} else {						
-								inst.bDraw = false;
-								inst.radius = inst.baseRadius;
-							}
+	var radCtrl = sig * 0.013;
+	if ( timers["global"].elapsedTime() > 35000 &&  timers["global"].elapsedSeconds() < 70. ) {
+		centerOfMass.x = util.getRandom((sig*20), sig*10 );
+		//post(centerOfMass.toString()+"\n");
+		var randKey = Math.floor(util.getRandom(Object.keys(instances).length, 0));
+		var counter = 0;
+		distanceVelRatio = (baseDistanceVelRatio * sig) + 0.25;
+		if (timers["violin"].update( new Date() ) ) {
+			for ( var k in instances ) {
+				if ( instances.hasOwnProperty(k) ) {
+					var col = colorPallete[k][Math.floor(util.getRandom(5, 0))];
+					for ( var j = 0; j < instances[k].length; j++ ) {
+						var inst = instances[k][j];
+						if ( randKey == Object.keys(instances).length ) {
+							inst.baseColor = col;
+							inst.bDraw = true;
+							inst.radius = inst.baseRadius + radCtrl;
+						} else if ( counter == randKey ) {
+							inst.baseColor = col;			
+							inst.bDraw = true;
+							inst.radius = inst.baseRadius + radCtrl;
+						} else {						
+							inst.bDraw = false;
+							inst.radius = inst.baseRadius;
 						}
-						counter++;
 					}
+					counter++;
 				}
 			}
 		}
@@ -564,64 +547,32 @@ function openingStarGen( drum ) {
 //
 // 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var split = false;
-var huntRad = 0.025;
-var huntXLimit = 0;
+var huntYPos = -1.;
+var huntRows = 10;
+var huntColumns = 10;
+var hX = -0.9;
+var hY = -0.9;
 function hunt( sig ) {
-	if ( Math.abs(sig) > 0.95 ) {
-		if ( timers["global"].elapsedTime() >= 71000 && timers["global"].elapsedTime() < 87500 ) {
-			if (timers["hunt"].update( new Date() ) ) {
-				var pX = util.getRandom(huntXLimit*2,-huntXLimit);
-				var pY = util.getRandom(_G.screenSize.y*2,-_G.screenSize.y);
-				var pos = new Vector( pX, pY );
-				var col;
-				if (!split) {
-					col = colorPallete["hunter_planes"][0];
-					split = !split;
-				} else {
-					//post(Math.floor(util.getRandom(2,1))+"\n");
-					col = colorPallete["hunter_planes"][Math.floor(util.getRandom(2,1))];
-					split = !split;
-				}
-				
-				var radius = huntRad;
-				var type = "plane";
-				huntRad = huntRad + 0.001;
-				if ( huntXLimit < 1. * _G.screenSize.x )
-					huntXLimit = huntXLimit + 0.015;
+	if ( timers["global"].elapsedTime() >= 70000 ) {
+		//huntYPos = huntYPos + util.getRandom(0.003,0.);
+		//var pX = util.getRandom(sig*20,-sig*10);
+		var pos = new Vector( hX, hY );
+		var col;
+		col = colorPallete["hunter_planes"][Math.floor(util.getRandom(colorPallete["hunter_planes"].length,0))];
+		var radius = 0.1;
+		var type = "plane";
 
-				var plane = new VelSketchInst( pos, col, radius, type, 0, 0, 0 );
-				instances["hunter_planes"].push(plane);
-				//post(instances["hunter_planes"].length+"\n");
-			}
+		var plane = new VelSketchInst( pos, col, radius, type, 0, 0, 0 );
+		instances["hunter_planes"].push(plane);
+		post(instances["hunter_planes"].length+"\n");
+		if ( hX < 0.9 ) {
+			hX = hX + 0.2;
+		} else {
+			hX = -0.9;
+			hY = hY + 0.2;
 		}
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function greaterHunt( sig ) {
-	if ( timers["global"].elapsedTime() > 87500. ) {
-		//post(sig+"\n");
-		for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
-			var inst = instances["hunter_planes"][i];
-			inst.velocity = new Vector(sig*0.8, inst.velocity.y);
-		}
-	}
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function abolishHunter() {
-	if (timers["abolishHunter"].update( new Date() ) ) {
-		if ( instances["hunter_planes"].length > 0 ) {
-			instances["hunter_planes"].pop();
-		}
-	}
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//
-//																		PART 3 END 
-//
-// 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function getInstSettings( dict, iteration ) {
 	var prefix = "settings::" + iteration + "::";
