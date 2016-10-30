@@ -56,5 +56,19 @@
 			"type" : "circle",
 			"speed" : "2.5"
 		}
+,
+		"4" : 
+		{
+			"max_pos_x" : 0.9,
+			"min_pos_x" : -0.9,
+			"max_pos_y" : -0.45,
+			"min_pos_y" : -0.45,
+			"col_r" : 0.56471,
+			"col_g" : 0.90196,
+			"col_b" : 0.07059,
+			"radius" : 0.029,
+			"type" : "circle",
+			"speed" : "2.5"
+		}
 	}
 }
