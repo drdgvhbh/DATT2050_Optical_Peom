@@ -547,8 +547,8 @@ var eraCTimings = {
 	8 : new Array( false, 127000., 130999., 0.15, 0.85 ),
 	9 : new Array( false, 131000., 134999., 0.85, 0.15 ),
 	10 : new Array( false, 135000., 139840., 0.15, 0.9 ),
-	11 : new Array( false, 177000., 212000., 0.9, 0.005 ),
-	13 : new Array( false, 212001., 225000., 0.1 , 0.85 )
+	11 : new Array( false, 177000., 210000., 0.9, 0.005 ),
+	13 : new Array( false, 212001., 220000., 0.005 , 0.85 )
 }
 
 var colorErase = new Array( "erase_color", 0., 0., 0., 1. );
