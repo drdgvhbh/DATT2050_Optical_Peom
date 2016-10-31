@@ -363,12 +363,12 @@ function update() {
 	}
 
 	if ( timers["global"].elapsedTime() > 177000 ) {
-		var dur = 28000;
-		var distance = -9;
-		var elapsed = timers["global"].elapsedTime() - 177000;
-		var ratio = elapsed / dur;
-		var change = ratio * distance;
-		gloriousStarFired = 12 + change;
+		var iDur = 28000;
+		var iDistance = -9;
+		var iElapsed = timers["global"].elapsedTime() - 177000;
+		var fRatio = iElapsed / iDur;
+		var fChange = fRatio * iDistance;
+		gloriousStarFired = 12 + fChange;
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,9 +532,9 @@ function checkTime() {
 				if ( k == "final" ) {
 					timings[k][0] = true;
 					for ( var i = 0; i < instances["hunter_planes"].length; i++ ) {
-						instances["hunter_planes"][i].velocity = new Vector(0., -0.1);
-						huntRad = 0.001;
+						instances["hunter_planes"][i].velocity = new Vector(0., -0.1);						
 					}
+					huntRad = 0.001;
 				}
 
 			}
