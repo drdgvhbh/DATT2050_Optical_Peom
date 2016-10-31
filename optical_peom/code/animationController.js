@@ -53,7 +53,7 @@ var timers = {
 	"abolishWar" : new Timers ( 100 ),
 	"gloriousStar" : new Timers( 6000 ),
 	"col" : new Timers( 6600 ),
-	"finalAbolish" : new Timers( 51 )
+	"finalAbolish" : new Timers( 34 )
 
 }
 
