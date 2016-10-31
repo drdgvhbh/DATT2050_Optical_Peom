@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 43.0, 85.0, 1194.0, 792.0 ],
+		"rect" : [ 44.0, 85.0, 1194.0, 792.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -37,6 +37,19 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-16",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 353.999939, 48.0, 155.0, 48.0 ],
+					"style" : "",
+					"text" : "keeps a 1.77777777 width to height ratio based on resolution. "
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-41",
 					"maxclass" : "newobj",
@@ -102,7 +115,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 163.0, 160.0, 64.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "-0.387921"
 								}
 
 							}
@@ -338,7 +351,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 47.0, 103.0, 1023.0, 753.0 ],
+						"rect" : [ -31958.0, -31916.0, 1023.0, 753.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -506,7 +519,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 478.200012, 322.816803, 134.0, 36.0 ],
 									"style" : "",
-									"text" : "sendwindow pos 382. 350"
+									"text" : "sendwindow pos 1022. 350"
 								}
 
 							}
@@ -702,7 +715,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 260.616333, 352.48349, 161.0, 36.0 ],
 									"style" : "",
-									"text" : "sendwindow size 1706.66688 960."
+									"text" : "sendwindow size 1920. 1080."
 								}
 
 							}
@@ -1113,13 +1126,14 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-35",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 50.0, 192.299988, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "-0.011045"
 								}
 
 							}
@@ -1386,13 +1400,14 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-24",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 179.833374, 156.700012, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "-0."
+									"text" : "0.030832"
 								}
 
 							}
@@ -1649,13 +1664,14 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-2",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 170.0, 169.0, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "1.089399"
 								}
 
 							}
@@ -1940,13 +1956,14 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-2",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 162.0, 167.0, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "0.149091"
 								}
 
 							}
@@ -2216,13 +2233,14 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-2",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 155.0, 171.633301, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "0.06945"
 								}
 
 							}
@@ -2468,13 +2486,14 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"id" : "obj-2",
+									"linecount" : 2,
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 165.0, 168.333313, 50.0, 22.0 ],
 									"style" : "",
-									"text" : "0."
+									"text" : "0.12249"
 								}
 
 							}
@@ -2748,7 +2767,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 434.0, 250.0, 84.0, 22.0 ],
 					"style" : "",
-					"text" : "51.509"
+					"text" : "135.926"
 				}
 
 			}
