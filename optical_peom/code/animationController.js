@@ -535,6 +535,26 @@ function checkTime() {
 						instances["hunter_planes"][i].velocity = new Vector(0., -0.1);						
 					}
 					huntRad = 0.001;
+					colorPallete["hunter_planes"] = new Array(
+						//217, 79, 2
+						new Array( //Complement
+							0.85098,
+							0.3098,
+							0.0078
+						),
+						//1, 217, 186
+						new Array( //Split Complement			
+							0.00392,
+							0.85098,
+							0.72941
+						),
+						//1, 32, 217
+						new Array( //Split Complement			
+							0.00392,
+							0.12549,
+							0.72941
+						)
+					);
 				}
 
 			}
