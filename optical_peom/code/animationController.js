@@ -52,7 +52,9 @@ var timers = {
 	"abolishStar" : new Timers ( 1000 ),
 	"abolishWar" : new Timers ( 100 ),
 	"gloriousStar" : new Timers( 6000 ),
-	"col" : new Timers( 6600 )
+	"col" : new Timers( 6600 ),
+	"finalAbolish" : new Timers( 51 )
+
 }
 
 var colorPallete = {
@@ -257,7 +259,7 @@ function update() {
 					+ centerOfMass.y;
 		}
 		if ( (timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000) || timers["global"].elapsedTime() > 212000 ) {
-			abolish( instances["stars"], timers["abolishStar"], "stars" );
+			abolish( instances["stars"], timers["finalAbolish"], "stars" );
 		}	
 
 	}
@@ -311,9 +313,11 @@ function update() {
 			
 			war.position.add(war.velocity);
 			//war.position = pP;	
-			if ( (timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000) || timers["global"].elapsedTime() > 212000  ) {
+			if ( (timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000) ) {
 				abolish( instances[k], timers["abolishWar"], k );
-			}	
+			}
+			if ( timers["global"].elapsedTime() > 212000 ) 	
+				abolish( instances[k], timers["finalAbolish"], k );
 		}
 	}
 
@@ -359,9 +363,12 @@ function update() {
 	}
 
 	if ( timers["global"].elapsedTime() > 177000 ) {
-		if ( gloriousStarFired > 2 && timers["gloriousStar"].update( new Date() ) ) {
-			gloriousStarFired = gloriousStarFired - 2;
-		}
+		var dur = 28000;
+		var distance = -9;
+		var elapsed = timers["global"].elapsedTime() - 177000;
+		var ratio = elapsed / dur;
+		var change = ratio * distance;
+		gloriousStarFired = 12 + change;
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -851,7 +858,7 @@ function hunt( sig ) {
 				|| (timers["global"].elapsedTime() > 109000 && timers["global"].elapsedTime() < 113500)
 				|| (timers["global"].elapsedTime() > 118000 && timers["global"].elapsedTime() < 122400)
 				|| (timers["global"].elapsedTime() > 127000 && timers["global"].elapsedTime() < 131000) 
-				|| (timers["global"].elapsedTime() > 135500 && timers["global"].elapsedTime() < 139840)
+				|| (timers["global"].elapsedTime() > 135500 && timers["global"].elapsedTime() < 139000)
 				|| (timers["global"].elapsedTime() > 212000 && timers["global"].elapsedTime() < 225000 ) ) {
 			if (timers["hunt"].update( new Date() ) ) {
 				var pX = util.getRandom( huntXLimit * 2, -huntXLimit );
