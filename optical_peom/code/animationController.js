@@ -258,10 +258,11 @@ function update() {
 					* ( Math.sin(star.theta) + Math.sin( 11 * star.theta ) / 2 + Math.cos( 14 * star.theta ) / 3 ) 
 					+ centerOfMass.y;
 		}
-		if ( (timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000) || timers["global"].elapsedTime() > 212000 ) {
+		if ( (timers["global"].elapsedTime() >= 66000 && timers["global"].elapsedTime() < 80000) ) {
+			abolish( instances["stars"], timers["abolishStar"], "stars" );
+		}
+		if ( timers["global"].elapsedTime() > 212000 ) 	
 			abolish( instances["stars"], timers["finalAbolish"], "stars" );
-		}	
-
 	}
 	//Update Blue and Red Warriors
 	for ( var j = 0; j < 2; j++ ) {
